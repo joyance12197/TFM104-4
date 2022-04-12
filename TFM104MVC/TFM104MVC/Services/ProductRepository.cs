@@ -182,6 +182,24 @@ namespace TFM104MVC.Services
         {
             await _context.Orders.AddAsync(order);
         }
+        
+        public async Task<Order> GetOrderById(Guid orderId)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderItems).ThenInclude(oi => oi.ProductId)
+                .Where(o => o.Id == orderId)
+                .FirstOrDefaultAsync();
+        }
+        
+        public async Task<IEnumerable<Order>> GetOrderByUserId(int userId)
+        {            
+            return await _context.Orders.Where(o => o.UserId == userId).ToListAsync();
+        }
+        
+        public void DeleteOrder(Order order)
+        {
+            _context.Orders.Remove(order);
+        }
 
     }
 }
